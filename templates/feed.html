@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <!-- Stylesheet -->
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;700;900&display=swap");
+
+        * {
+            font-family: "Source Sans Pro", sans-serif;
+        }
+
+        body,
+        input {
+        font-size: 18px;
+        color: #585858;
+        height: 100vh;
+        }
+        header {
+        color: #1d9bf0;
+        font-size: 40px;
+        padding: 10px 0 0 0;
+        width: 20%;
+        text-align: center;
+        }
+        .container {
+        display: flex;
+        /* justify-content: space-around; */
+        height: 100%;
+        }
+        .main {
+        border-left: solid 1px rgb(219, 219, 219);
+        padding: 20px 0 0 30px;
+        width: 50%;
+        }
+
+        #tweets {
+        border-top: solid 1px rgb(219, 219, 219);
+        padding-top: 20px;
+        margin-top: 30px;
+        }
+        .error {
+        padding: 5px;
+        width: 100%;
+        background: rgb(202, 0, 0);
+        color: #fff;
+        margin: 10px 0;
+        }
+        .tweet-content {
+        background: rgba(29, 161, 242, 0.3);
+        border-radius: 10px;
+        padding: 10px;
+        position: relative;
+        font-size: 13px;
+        }
+
+        .tweet{
+        background: rgba(29, 161, 242, 0.1);
+        border-radius: 10px;
+        margin-bottom: 17.5px;
+        padding: 10px;
+        position: relative;
+        }
+
+        .deletebutton {
+        color: red;
+        position: absolute;
+        right: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .fa-heart {
+        color: grey;
+        position: absolute;
+        right: 65px;
+        top: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .fa-retweet {
+        color: grey;
+        position: absolute;
+        right: 35px;
+        top: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .liked {
+        color: blue;
+        font-size: 14px;
+        margin-top: -15px;
+        margin-left: 10px;
+        }
+
+        .tweet-header {
+        font-weight: bold;
+        color: blue;
+        font-size: 14px;
+        margin-top: 20px;
+        margin-left: 10px;
+        }
+
+        .login-info, .logout-text{
+        font-size: 13px;
+        }
+
+        .error {
+            text-align: left;
+            color: red;
+            background: none;
+            margin: 15px 0;
+        }
+    </style>
+
+    <!-- Main content -->
+    <div class="container">
+
+        <header>
+            <img src="https://img.icons8.com/external-flaticons-flat-flat-icons/64/000000/external-bird-veterinary-flaticons-flat-flat-icons.png" />FakeTwitter
+            <div class="login-info">Logged in as {{ username }}</div>
+            <a class="logout-text" href="/logout">Sign Out</a>
+        </header>
+
+        <div class="main">
+
+            <form id="form" method="POST">
+                <p>Share your thoughts!</p>
+                <textarea id="tweet" name="content" class="form-control" rows="3"></textarea>
+                <button type="submit" class="btn btn-primary mt-3">Tweet</button>
+                <p class="error">{{ error }}</p>
+            </form>
+
+            <div id="tweets">
+
+                <h5>Latest Tweets:</h5>
+                <div id="list-tweets"></div>
+
+                <!--
+                <div class="tweet">
+                    <div class="tweet-header"><i> ObiWanKenobi</i> says:</div>
+                    <p class="tweet-content">May the Force be with you!<i class="fa-solid fa-heart"></i><i class="fa-solid fa-retweet"></i><a class="deletebutton"><i class="fa-solid fa-delete-left"></i></a></p>
+                    <div class="liked">Liked by AnakinSkywalker, R2D2 and 15 others</div>
+                </div>
+            
+                <div class="tweet">
+                    <div class="tweet-header"> <i> TheRealYoda</i> says:</div>
+                    <p class="tweet-content">Do. Or do not. There is no try.<i class="fa-solid fa-heart"></i><i class="fa-solid fa-retweet"></i></p>
+                    <div class="liked">Liked by PrincessLeia, LukeSkywalker and 12 others</div>
+                </div>
+            
+                <div class="tweet">
+                    <div class="tweet-header"> <i> NotLukeSkywalker</i> retweeted <i> ObiWanKenobi</i>:</div>
+                        <p class="tweet-content">May the Force be with you! <i class="fa-solid fa-heart"></i><i class="fa-solid fa-retweet"></i></p>
+                    <div class="liked">Liked by HanSolo, BobaFett and 3 others</div>
+                </div>
+                -->
+
+                {% for tweet in tweets %}
+                <div class="tweet">
+
+                    <div class="tweet-header"><i>{{ tweet.author }}</i> says:</div>
+
+                    <p class="tweet-content">{{ tweet.content }}
+                    
+                    <a href="?like={{ tweet._id }}">
+                        
+                        <i class="fa-solid fa-heart"
+                        {% if likes.isLikedBy(tweet._id, username) %}
+                            style="color: red"
+                        {% else %}
+                            style="color: #808080"
+                        {% endif %}></i>
+                    
+                    </a>
+                    
+                    <i class="fa-solid fa-retweet"></i>
+                        
+                    {% if tweet.author == username %}
+                    <a href="?delete={{ tweet._id }}" class="deletebutton"><i class="fa-solid fa-delete-left"></i></a></p>
+                    {% endif %}
+
+                    <div class="liked">{{ likes.likedBy(tweet._id) }}</div>
+
+                </div>
+                {% endfor %}
+
+            </div>
+            
+        </div>
+    
+    </div>
+
+{% endblock %}
